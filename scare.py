@@ -17,6 +17,8 @@ import threading
 # Various pins used for effect, using BOARD pin numbering
 buttonPin = 12
 Relay_Ch1 = 37 # Ch 2 = 38, Ch 3 = 40
+greenLedPin = 32
+redLedPin = 22
 
 # Configuration/State Variables
 scaring = False
@@ -25,11 +27,11 @@ regularSceneId = 5
 PCF8574_address = 0x27  # I2C address of the PCF8574 chip.
 PCF8574A_address = 0x3F  # I2C address of the PCF8574A chip.
 
-# Global Timing Variable
-acceptableLaunchTime = time()
-
 # Initialize connection to light console
-ws = create_connection("ws://192.168.1.5:9999/qlcplusWS")
+try:
+    ws = create_connection("ws://192.168.1.5:9999/qlcplusWS")
+except:
+    print('Websocket offline.')
 
 # Initialize LCD Display
 try:
@@ -52,6 +54,10 @@ def setup():
     GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(Relay_Ch1,GPIO.OUT)
     GPIO.output(Relay_Ch1,GPIO.HIGH)
+    GPIO.setup(greenLedPin, GPIO.OUT)
+    GPIO.output(greenLedPin, GPIO.HIGH)
+    GPIO.setup(redLedPin, GPIO.OUT)
+    GPIO.output(redLedPin, GPIO.LOW)
     
     # Event handler
     GPIO.add_event_detect(buttonPin, GPIO.RISING, callback=executeScare, bouncetime=2000)
@@ -90,6 +96,10 @@ def scareSequence():
     lcd.clear()
     lcd.message('   Scaring...  \nPlease Stand By')
 
+    # Start scare sequence
+    t2 = threading.Thread(target=showBusyLight)  
+    t2.start() 
+
     # Activate relay for animatronic.
     GPIO.output(Relay_Ch1,GPIO.LOW)
 
@@ -103,7 +113,7 @@ def scareSequence():
     GPIO.output(Relay_Ch1,GPIO.HIGH)
 
     # Wait 15 seconds (how long before we should return lighting to normal)
-    sleep(15)
+    sleep(5)
 
     # Run reset scare function.
     resetScare()
@@ -135,6 +145,18 @@ def stopStrobeScene():
     # Stop Existing
     ws.send('QLC+API|setFunctionStatus|' + str(strobeSceneId) + '|0')
     ws.send('QLC+API|setFunctionStatus|' + str(regularSceneId) + '|1')
+
+def showBusyLight():
+
+    GPIO.output(greenLedPin, GPIO.LOW)
+
+    while scaring is True:
+        GPIO.output(redLedPin, GPIO.HIGH)
+        sleep(0.1)
+        GPIO.output(redLedPin, GPIO.LOW)
+        sleep(0.1)
+    
+    GPIO.output(greenLedPin, GPIO.HIGH)
 
 # Main Program Loop
 try:
