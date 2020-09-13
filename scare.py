@@ -137,14 +137,20 @@ def resetScare ():
 def startStrobeScene():
     print("Sending light command via websocket")
     # Stop Existing
-    ws.send('QLC+API|setFunctionStatus|' + str(regularSceneId) + '|0')
-    ws.send('QLC+API|setFunctionStatus|' + str(strobeSceneId) + '|1')
+    try:
+        ws.send('QLC+API|setFunctionStatus|' + str(regularSceneId) + '|0')
+        ws.send('QLC+API|setFunctionStatus|' + str(strobeSceneId) + '|1')
+    except:
+        print('Unable to send command to light console.')
 
 def stopStrobeScene():
     print("Sending light command via websocket")
     # Stop Existing
-    ws.send('QLC+API|setFunctionStatus|' + str(strobeSceneId) + '|0')
-    ws.send('QLC+API|setFunctionStatus|' + str(regularSceneId) + '|1')
+    try:
+        ws.send('QLC+API|setFunctionStatus|' + str(strobeSceneId) + '|0')
+        ws.send('QLC+API|setFunctionStatus|' + str(regularSceneId) + '|1')
+    except:
+        print('Unable to send command to light console.')
 
 def showBusyLight():
 
