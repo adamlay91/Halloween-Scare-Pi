@@ -9,9 +9,8 @@
 import RPi.GPIO as GPIO
 from PCF8574 import PCF8574_GPIO
 from Adafruit_LCD1602 import Adafruit_CharLCD
-from time import sleep, time, strftime, asctime
+from time import sleep
 from websocket import create_connection
-import math
 import threading
 
 # Various pins used for effect, using BOARD pin numbering
