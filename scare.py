@@ -21,8 +21,8 @@ redLedPin = 22
 
 # Configuration/State Variables
 scaring = False
-strobeSceneId = 3
-regularSceneId = 5
+strobeSceneId = 29
+regularSceneId = 28
 PCF8574_address = 0x27  # I2C address of the PCF8574 chip.
 PCF8574A_address = 0x3F  # I2C address of the PCF8574A chip.
 
@@ -102,17 +102,20 @@ def scareSequence():
     # Activate relay for animatronic.
     GPIO.output(Relay_Ch1,GPIO.LOW)
 
+    #Wait a second before triggering the strobe.
+    sleep(1)
+
     # Send DMX command
     startStrobeScene()
 
-    # Wait 2 seconds before turning the relay off.
-    sleep(2)
+    # Wait a second before turning the relay off.
+    sleep(1)
 
     # Turn off relay for animatronic, that should be enough time to trigger.
     GPIO.output(Relay_Ch1,GPIO.HIGH)
 
-    # Wait 15 seconds (how long before we should return lighting to normal)
-    sleep(5)
+    # Wait 25 seconds (how long before we should return lighting to normal)
+    sleep(20)
 
     # Run reset scare function.
     resetScare()
