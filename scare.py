@@ -22,7 +22,7 @@ redLedPin = 22
 # Configuration/State Variables
 scaring = False
 strobeSceneId = 29
-regularSceneId = 28
+regularSceneId = 45
 PCF8574_address = 0x27  # I2C address of the PCF8574 chip.
 PCF8574A_address = 0x3F  # I2C address of the PCF8574A chip.
 
